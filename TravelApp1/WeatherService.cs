@@ -1,7 +1,7 @@
 ﻿
 using RestSharp;
 using Newtonsoft.Json;
-namespace WebFrameCA2
+namespace TravelApp1
 {
 
     public class WeatherService
