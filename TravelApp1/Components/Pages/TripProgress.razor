@@ -3,31 +3,33 @@
 
 <PageTitle>Trip Progress Tracker</PageTitle>
 
-<h1>Trip Planning Progress</h1>
+<div class="container mt-5" style="background: url('/2.jpg') no-repeat center center fixed; background-size: cover; border-radius: 8px; padding: 20px;">
+    <h1>Trip Planning Progress</h1>
 
-<div class="progress mb-4">
-    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-         role="progressbar"
-         style="width: @(ProgressPercentage)%;"
-         aria-valuenow="@ProgressPercentage"
-         aria-valuemin="0"
-         aria-valuemax="100">
-        @($"{ProgressPercentage}% Complete")
+    <div class="progress mb-4">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+             role="progressbar"
+             style="width: @(ProgressPercentage)%;"
+             aria-valuenow="@ProgressPercentage"
+             aria-valuemin="0"
+             aria-valuemax="100">
+            @($"{ProgressPercentage}% Complete")
+        </div>
     </div>
+
+    <p role="status">Activities completed: @CompletedActivities / @TotalActivities</p>
+
+    <div>
+        <button class="btn btn-primary mb-2" @onclick="CheckWeather">Check Weather</button>
+        <button class="btn btn-secondary mb-2" @onclick="FindNews">Find News</button>
+        <button class="btn btn-success mb-2" @onclick="SaveLocation">Save Favorite Location</button>
+    </div>
+
+    @if (Message != null)
+    {
+        <div class="alert alert-info mt-3">@Message</div>
+    }
 </div>
-
-<p role="status">Activities completed: @CompletedActivities / @TotalActivities</p>
-
-<div>
-    <button class="btn btn-primary mb-2" @onclick="CheckWeather">Check Weather</button>
-    <button class="btn btn-secondary mb-2" @onclick="FindNews">Find News</button>
-    <button class="btn btn-success mb-2" @onclick="SaveLocation">Save Favorite Location</button>
-</div>
-
-@if (Message != null)
-{
-    <div class="alert alert-info mt-3">@Message</div>
-}
 
 @code {
     private int CompletedActivities = 0;

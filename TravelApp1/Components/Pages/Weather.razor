@@ -1,46 +1,48 @@
 ﻿@page "/weather"
 @inject LocationService LocationService
 
-<h3>Weather Information</h3>
+<div class="container mt-5" style="background: url('/2.jpg') no-repeat center center fixed; background-size: cover; border-radius: 8px; padding: 20px;">
+    <h3>Weather Information</h3>
 
-<div>
-    <input @bind="LocationService.Location" placeholder="Enter location" class="form-control mb-2" />
-    <button @onclick="DownloadWeather" class="btn btn-primary mb-3">Get Weather</button>
-</div>
-
-@if (WeatherData != null)
-{
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Weather in @WeatherData.ResolvedAddress</h5>
-            <p class="card-text">Current Temp: @WeatherData.CurrentConditions.Temp &deg;C</p>
-            <p class="card-text">Conditions: @WeatherData.CurrentConditions.Conditions</p>
-            <p class="card-text">Humidity: @WeatherData.CurrentConditions.Humidity%</p>
-            <p class="card-text">Wind Speed: @WeatherData.CurrentConditions.WindSpeed km/h</p>
-        </div>
+    <div>
+        <input @bind="LocationService.Location" placeholder="Enter location" class="form-control mb-2" />
+        <button @onclick="DownloadWeather" class="btn btn-primary mb-3">Get Weather</button>
     </div>
 
-    <h5>Daily Forecast</h5>
-    <div class="row">
-        @foreach (var day in WeatherData.Days)
-        {
-            <div class="col-md-4">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h6>@day.DateTime</h6>
-                        <p>Max Temp: @day.TempMax &deg;C</p>
-                        <p>Min Temp: @day.TempMin &deg;C</p>
-                        <p>Conditions: @day.Conditions</p>
+    @if (WeatherData != null)
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Weather in @WeatherData.ResolvedAddress</h5>
+                <p class="card-text">Current Temp: @WeatherData.CurrentConditions.Temp &deg;C</p>
+                <p class="card-text">Conditions: @WeatherData.CurrentConditions.Conditions</p>
+                <p class="card-text">Humidity: @WeatherData.CurrentConditions.Humidity%</p>
+                <p class="card-text">Wind Speed: @WeatherData.CurrentConditions.WindSpeed km/h</p>
+            </div>
+        </div>
+
+        <h5>Daily Forecast</h5>
+        <div class="row">
+            @foreach (var day in WeatherData.Days)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>@day.DateTime</h6>
+                            <p>Max Temp: @day.TempMax &deg;C</p>
+                            <p>Min Temp: @day.TempMin &deg;C</p>
+                            <p>Conditions: @day.Conditions</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
-else if (ErrorMessage != null)
-{
-    <div class="alert alert-danger">@ErrorMessage</div>
-}
+            }
+        </div>
+    }
+    else if (ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+</div>
 
 @code {
     private WeatherResponse WeatherData;
@@ -59,5 +61,3 @@ else if (ErrorMessage != null)
         }
     }
 }
-
-
