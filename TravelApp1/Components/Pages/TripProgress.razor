@@ -1,0 +1,77 @@
+﻿@page "/trip-planning"
+@rendermode InteractiveServer
+
+<PageTitle>Trip Progress Tracker</PageTitle>
+
+<h1>Trip Planning Progress</h1>
+
+<div class="progress mb-4">
+    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+         role="progressbar"
+         style="width: @(ProgressPercentage)%;"
+         aria-valuenow="@ProgressPercentage"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        @($"{ProgressPercentage}% Complete")
+    </div>
+</div>
+
+<p role="status">Activities completed: @CompletedActivities / @TotalActivities</p>
+
+<div>
+    <button class="btn btn-primary mb-2" @onclick="CheckWeather">Check Weather</button>
+    <button class="btn btn-secondary mb-2" @onclick="FindNews">Find News</button>
+    <button class="btn btn-success mb-2" @onclick="SaveLocation">Save Favorite Location</button>
+</div>
+
+@if (Message != null)
+{
+    <div class="alert alert-info mt-3">@Message</div>
+}
+
+@code {
+    private int CompletedActivities = 0;
+    private int TotalActivities = 3; // Total tasks in the trip planning
+    private string? Message;
+
+    private int ProgressPercentage => (CompletedActivities * 100) / TotalActivities;
+
+    private void CheckWeather()
+    {
+        if (!ActivityCompleted("Weather"))
+        {
+            CompletedActivities++;
+            Message = "You checked the weather!";
+        }
+    }
+
+    private void FindNews()
+    {
+        if (!ActivityCompleted("News"))
+        {
+            CompletedActivities++;
+            Message = "You found some news!";
+        }
+    }
+
+    private void SaveLocation()
+    {
+        if (!ActivityCompleted("Location"))
+        {
+            CompletedActivities++;
+            Message = "You saved your favorite location!";
+        }
+    }
+
+    private HashSet<string> CompletedTasks = new();
+    private bool ActivityCompleted(string task)
+    {
+        if (CompletedTasks.Contains(task))
+        {
+            Message = $"You've already completed '{task}'.";
+            return true;
+        }
+        CompletedTasks.Add(task);
+        return false;
+    }
+}
