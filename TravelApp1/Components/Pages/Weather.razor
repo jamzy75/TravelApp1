@@ -1,64 +1,63 @@
 ﻿@page "/weather"
-@attribute [StreamRendering]
+@inject LocationService LocationService
 
-<PageTitle>Weather</PageTitle>
+<div class="container mt-5" style="background: url('/2.jpg') no-repeat center center fixed; background-size: cover; border-radius: 8px; padding: 20px;">
+    <h3>Weather Information</h3>
 
-<h1>Weather</h1>
+    <div>
+        <input @bind="LocationService.Location" placeholder="Enter location" class="form-control mb-2" />
+        <button @onclick="DownloadWeather" class="btn btn-primary mb-3">Get Weather</button>
+    </div>
 
-<p>This component demonstrates showing data.</p>
+    @if (WeatherData != null)
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Weather in @WeatherData.ResolvedAddress</h5>
+                <p class="card-text">Current Temp: @WeatherData.CurrentConditions.Temp &deg;C</p>
+                <p class="card-text">Conditions: @WeatherData.CurrentConditions.Conditions</p>
+                <p class="card-text">Humidity: @WeatherData.CurrentConditions.Humidity%</p>
+                <p class="card-text">Wind Speed: @WeatherData.CurrentConditions.WindSpeed km/h</p>
+            </div>
+        </div>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
+        <h5>Daily Forecast</h5>
+        <div class="row">
+            @foreach (var day in WeatherData.Days)
             {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>@day.DateTime</h6>
+                            <p>Max Temp: @day.TempMax &deg;C</p>
+                            <p>Min Temp: @day.TempMin &deg;C</p>
+                            <p>Conditions: @day.Conditions</p>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
+        </div>
+    }
+    else if (ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+</div>
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private WeatherResponse WeatherData;
+    private string ErrorMessage;
 
-    protected override async Task OnInitializedAsync()
+    private async Task DownloadWeather()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        try
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
-
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+            WeatherData = await WeatherService.GetWeatherAsync(LocationService.Location);
+            ErrorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error fetching weather data: {ex.Message}";
+        }
     }
 }
